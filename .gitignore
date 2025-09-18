@@ -1,0 +1,12 @@
+# Global ignores
+.DS_Store
+.idea/
+.vscode/
+
+# Backend
+backend/node_modules/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/.env
