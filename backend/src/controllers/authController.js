@@ -39,7 +39,7 @@ export const login = async (req, res) => {
 
 
 
-// Optional in-memory blacklist (for demo, use Redis/DB in production)
+
 const tokenBlacklist = new Set();
 
 export const logout = async (req, res) => {
@@ -47,7 +47,7 @@ export const logout = async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(400).json({ message: "No token provided" });
 
-    // Add token to blacklist (expires when token naturally expires)
+   
     tokenBlacklist.add(token);
 
     res.status(200).json({ message: "Logged out successfully" });
@@ -57,5 +57,5 @@ export const logout = async (req, res) => {
   }
 };
 
-// helper to check if a token is blacklisted
+
 export const isTokenBlacklisted = (token) => tokenBlacklist.has(token);

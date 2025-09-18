@@ -38,7 +38,7 @@ export const getAllStores = async (req, res) => {
   }
 };
 
-// Submit or update rating
+// Submit rating
 export const submitRating = async (req, res) => {
   try {
     const { storeId, value } = req.body;
