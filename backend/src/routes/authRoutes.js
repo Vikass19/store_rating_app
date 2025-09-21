@@ -8,7 +8,7 @@ import { authenticate, authorizeRoles } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // Route: POST /api/auth/signup , login , logout , password
-router.post("/signup", signup);
+router.post("/register", signup);
 router.post("/login", login);
 router.post("/logout", authenticate , logout);
 router.put("/password", authenticate);

@@ -13,10 +13,11 @@ model User {
   email    String   @unique
   password String
   address  String?
-  role     Role     @default(USER)
+  role     Role     @default(NORMAL_USER)   // <-- fixed
   stores   Store[]  @relation("StoreOwner")
   ratings  Rating[]
 }
+
 
 model Store {
   id      Int      @id @default(autoincrement())
@@ -38,7 +39,7 @@ model Rating {
 }
 
 enum Role {
-  ADMIN
-  USER
-  OWNER
+  SYSTEM_ADMINISTRATOR
+  NORMAL_USER
+  STORE_OWNER
 }

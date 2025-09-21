@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
 import ratingRoutes from "./routes/ratingRoutes.js";
+import userRoutes from "./routes/userRoutes.js"
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 // Correct route prefixes – add the leading "/"
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/stores", storeRoutes);
 app.use("/api/v1/ratings", ratingRoutes);
 
