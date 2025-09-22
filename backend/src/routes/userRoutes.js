@@ -4,9 +4,9 @@ import { authenticate, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Admin routes
-router.post("/", authenticate, authorizeRoles("ADMIN"), createUser);
-router.get("/", authenticate, authorizeRoles("ADMIN"), getAllUsers);
+// SYSTEM_ADMINISTRATOR routes
+router.post("/", authenticate, authorizeRoles("SYSTEM_ADMINISTRATOR"), createUser);
+router.get("/", authenticate, authorizeRoles("SYSTEM_ADMINISTRATOR"), getAllUsers);
 
 // Normal user route
 router.put("/password", authenticate, updatePassword);

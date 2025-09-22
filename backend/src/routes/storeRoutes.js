@@ -9,9 +9,9 @@ router.get("/", authenticate, getAllStores);
 router.get("/:storeId/ratings", authenticate, getStoreRatings);
 
 // Store creation (admin or store owner)
-router.post("/", authenticate, authorizeRoles("ADMIN", "STORE_OWNER"), createStore);
+router.post("/", authenticate, authorizeRoles("SYSTEM_ADMINISTRATOR", "STORE_OWNER"), createStore);
 
 // Ratings submission (normal users)
-router.post("/rating", authenticate, authorizeRoles("USER"), submitRating);
+router.post("/rating", authenticate, authorizeRoles("NORMAL_USER"), submitRating);
 
 export default router;

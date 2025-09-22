@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import api from "../../api/apis"; // use centralized api.js
+import api from "../../api/apis";
 import AdminDashboard from "../Admin/Dashboard";
 import OwnerDashboard from "../Owner/OwnerDashboard";
 import UserStoreList from "../user/StoreList";
+import { FiUser, FiMail, FiLock, FiShield } from "react-icons/fi";
 
 export default function Profile() {
   const { user } = useContext(AuthContext);
@@ -16,7 +17,7 @@ export default function Profile() {
     setError("");
     if (!password) return setError("Password cannot be empty");
     try {
-      await api.put("/auth/password", { password });
+      await api.put("/auth/users/password", { password });
       setMsg("Password updated successfully");
       setPassword("");
     } catch (e) {
@@ -36,7 +37,7 @@ export default function Profile() {
         return <UserStoreList />;
       default:
         return (
-          <div className="p-4 text-gray-600 border rounded">
+          <div className="p-4 text-gray-500 border rounded bg-white shadow-sm">
             No dashboard available
           </div>
         );
@@ -46,31 +47,45 @@ export default function Profile() {
   return (
     <div className="max-w-4xl mx-auto mt-6 space-y-6">
       {/* User Info */}
-      <div className="p-4 border rounded bg-gray-50">
-        <h2 className="text-2xl font-bold mb-4">Profile</h2>
-        <div className="mb-2"><strong>Name:</strong> {user?.name}</div>
-        <div className="mb-2"><strong>Email:</strong> {user?.email}</div>
-        <div className="mb-2"><strong>Role:</strong> {user?.role}</div>
+      <div className="p-6 border rounded-lg bg-white shadow-md flex flex-col space-y-3">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile</h2>
+        <div className="flex items-center text-gray-800 space-x-2">
+          <FiUser className="text-gray-600" />
+          <span><strong>Name:</strong> {user?.name}</span>
+        </div>
+        <div className="flex items-center text-gray-800 space-x-2">
+          <FiMail className="text-gray-600" />
+          <span><strong>Email:</strong> {user?.email}</span>
+        </div>
+        <div className="flex items-center text-gray-800 space-x-2">
+          <FiShield className="text-gray-600" />
+          <span><strong>Role:</strong> {user?.role}</span>
+        </div>
       </div>
 
       {/* Dashboard */}
       {renderDashboard()}
 
       {/* Change Password */}
-      <div className="p-4 border rounded bg-gray-50 max-w-sm">
-        <h3 className="font-semibold mb-2">Change Password</h3>
-        {msg && <div className="mb-2 text-green-600">{msg}</div>}
-        {error && <div className="mb-2 text-red-600">{error}</div>}
+      <div className="p-6 border rounded-lg bg-white shadow-md max-w-sm space-y-3">
+        <h3 className="font-semibold text-gray-900 mb-2 flex items-center space-x-2">
+          <FiLock className="text-gray-600" />
+          <span>Change Password</span>
+        </h3>
+
+        {msg && <div className="text-green-600">{msg}</div>}
+        {error && <div className="text-red-600">{error}</div>}
+
         <input
           type="password"
           placeholder="New password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border mb-2"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <button
           onClick={changePassword}
-          className="bg-blue-600 text-white px-3 py-1 rounded w-full"
+          className="w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
         >
           Change Password
         </button>

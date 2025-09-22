@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 // Correct route prefixes – add the leading "/"
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/auth/users", userRoutes);
 app.use("/api/v1/stores", storeRoutes);
 app.use("/api/v1/ratings", ratingRoutes);
 

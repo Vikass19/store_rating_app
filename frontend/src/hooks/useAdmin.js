@@ -1,6 +1,5 @@
-// src/hooks/useAdminData.jsx
 import { useEffect, useState, useCallback } from "react";
-import { fetchUsers, fetchStores, fetchStoreRatings } from "../api/apis"; // import functions directly
+import { fetchUsers, fetchStores, fetchStoreRatings } from "../api/apis";
 
 export default function useAdminData() {
   const [stats, setStats] = useState({ users: 0, stores: 0, ratings: 0 });
@@ -12,14 +11,11 @@ export default function useAdminData() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-
     try {
-      // Fetch users and stores
       const [uRes, sRes] = await Promise.all([fetchUsers(), fetchStores()]);
       setUsers(uRes);
       setStores(sRes);
 
-      // Calculate total ratings across all stores
       const ratingsCounts = await Promise.all(
         sRes.map((store) => fetchStoreRatings(store.id))
       );
@@ -41,9 +37,7 @@ export default function useAdminData() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   return { stats, users, stores, loading, error, refresh: fetchData };
 }

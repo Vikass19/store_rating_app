@@ -1,6 +1,6 @@
-// src/components/admin/AddStore.jsx
 import React, { useState } from "react";
-import api from "../../api/apis";
+import { FiShoppingBag } from "react-icons/fi";
+import { createStore } from "../../api/apis";
 
 export default function AddStore({ onStoreAdded }) {
   const [form, setForm] = useState({
@@ -23,11 +23,10 @@ export default function AddStore({ onStoreAdded }) {
     setMsg({ text: "", type: "" });
 
     try {
-      
-      await api.createStore(form);
+      await createStore(form);
       setMsg({ text: "Store added successfully!", type: "success" });
       setForm({ name: "", email: "", address: "", ownerId: "" });
-      if (onStoreAdded) onStoreAdded(); // refresh parent dashboard data
+      if (onStoreAdded) onStoreAdded();
     } catch (err) {
       setMsg({
         text: err.response?.data?.message || "Failed to add store",
@@ -39,22 +38,27 @@ export default function AddStore({ onStoreAdded }) {
   };
 
   return (
-    <div className="mb-6 p-4 border rounded bg-gray-50">
-      <h3 className="font-semibold mb-2 text-gray-900">Add New Store</h3>
+    <section className="p-6 border rounded-lg shadow-md bg-white space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <FiShoppingBag className="text-black" size={22} />
+        <h3 className="font-semibold text-gray-900 text-lg">Add New Store</h3>
+      </div>
+
       {msg.text && (
         <div
-          className={`mb-2 p-2 rounded ${
+          className={`p-3 rounded ${
             msg.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
           {msg.text}
         </div>
       )}
-      <form onSubmit={submit} className="grid grid-cols-4 gap-2">
+
+      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <input
           name="name"
-          className="border p-2 rounded"
           placeholder="Store Name"
+          className="border p-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
           value={form.name}
           onChange={handleChange}
           required
@@ -62,36 +66,38 @@ export default function AddStore({ onStoreAdded }) {
         <input
           name="email"
           type="email"
-          className="border p-2 rounded"
           placeholder="Store Email"
+          className="border p-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
           value={form.email}
           onChange={handleChange}
           required
         />
         <input
           name="address"
-          className="border p-2 rounded"
           placeholder="Address"
+          className="border p-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
           value={form.address}
           onChange={handleChange}
           required
         />
         <input
           name="ownerId"
-          className="border p-2 rounded"
           placeholder="Owner ID"
+          className="border p-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
           value={form.ownerId}
           onChange={handleChange}
           required
         />
+
         <button
           type="submit"
           disabled={loading}
-          className="col-span-4 mt-2 bg-gray-900 text-white py-2 rounded hover:bg-black transition"
+          className="col-span-1 md:col-span-4 mt-2 flex items-center justify-center gap-2 bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition font-semibold"
         >
+          <FiShoppingBag />
           {loading ? "Adding..." : "Add Store"}
         </button>
       </form>
-    </div>
+    </section>
   );
 }

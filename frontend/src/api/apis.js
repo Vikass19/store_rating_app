@@ -1,156 +1,85 @@
 import axios from "axios";
 
-// Create an Axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1",
+  headers: { "Content-Type": "application/json" },
 });
 
-// Helper to get token from localStorage or context
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token"); // store JWT after login
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
-// ------------------- USER APIs -------------------
-
-// Fetch all users (ADMIN only)
-export const fetchUsers = async () => {
-  try {
-    const res = await api.get("/auth/", { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching users:", err.response?.data || err.message);
-    throw err;
-  }
-};
-
-// Create new user (ADMIN only)
-export const createUser = async (userData) => {
-  try {
-    const res = await api.post("/auth/", userData, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error creating user:", err.response?.data || err.message);
-    throw err;
-  }
-};
-
-// Update password (logged-in user)
-export const updatePassword = async (newPassword) => {
-  try {
-    const res = await api.put("/auth/password", { password: newPassword }, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error updating password:", err.response?.data || err.message);
-    throw err;
-  }
-};
+// Attach token 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 
-
-// Add helper to set token dynamically
 export const setToken = (token) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  if (token) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common["Authorization"];
+  }
 };
 
+// ===== USERS (Admin only) =====
+export const fetchUsers = async () => {
+  const res = await api.get("/auth/users");
+  return res.data;
+};
 
+export const createUser = async (userData) => {
+  const res = await api.post("/auth/users", userData);
+  return res.data;
+};
 
-// ------------------- STORE APIs -------------------
+export const updatePassword = async (newPassword) => {
+  const res = await api.put("/auth/users/password", { password: newPassword });
+  return res.data;
+};
 
-// Fetch all stores
+// ===== STORES =====
 export const fetchStores = async () => {
-  try {
-    const res = await api.get("/stores/", { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching stores:", err.response?.data || err.message);
-    throw err;
-  }
+  const res = await api.get("/stores");
+  return res.data;
 };
 
-// Create new store (ADMIN or STORE_OWNER)
-export const createStore = async (storeData) => {
-  try {
-    const res = await api.post("/stores/", storeData, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error creating store:", err.response?.data || err.message);
-    throw err;
-  }
+export const createStore = async (data) => {
+  const res = await api.post("/stores", data);
+  return res.data;
 };
 
-// Fetch store by ID
-export const fetchStoreById = async (storeId) => {
-  try {
-    const res = await api.get(`/stores/${storeId}`, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching store:", err.response?.data || err.message);
-    throw err;
-  }
+export const fetchStoreById = async (id) => {
+  const res = await api.get(`/stores/${id}`);
+  return res.data;
 };
 
-// ------------------- RATING APIs -------------------
-
-// Submit a rating (USER)
-export const submitRating = async (storeId, rating) => {
-  try {
-    const res = await api.post("/stores/rating", { storeId, value: rating }, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error submitting rating:", err.response?.data || err.message);
-    throw err;
-  }
+// ===== RATINGS =====
+export const submitRating = async (storeId, value) => {
+  const res = await api.post("/stores/rating", { storeId, value });
+  return res.data;
 };
 
-// Fetch ratings for a store
 export const fetchStoreRatings = async (storeId) => {
-  try {
-    const res = await api.get(`/stores/${storeId}/ratings`, { headers: getAuthHeader() });
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching store ratings:", err.response?.data || err.message);
-    throw err;
-  }
+  const res = await api.get(`/stores/${storeId}/ratings`);
+  return res.data;
 };
 
-// ------------------- AUTH APIs -------------------
-
-// Signup
-export const signup = async (userData) => {
-  try {
-    const res = await api.post("/auth/register", userData);
-    return res.data;
-  } catch (err) {
-    console.error("Signup error:", err.response?.data || err.message);
-    throw err;
-  }
+// ===== AUTH =====
+export const signup = async (data) => {
+  const res = await api.post("/auth/register", data);
+  return res.data;
 };
 
-// Login
 export const login = async (credentials) => {
-  try {
-    const res = await api.post("/auth/login", credentials);
-    return res.data; // usually contains token
-  } catch (err) {
-    console.error("Login error:", err.response?.data || err.message);
-    throw err;
-  }
+  const res = await api.post("/auth/login", credentials);
+  
+  localStorage.setItem("token", res.data.token);
+  return res.data;
 };
 
-// Logout
 export const logout = async () => {
-  try {
-    const res = await api.post("/auth/logout", {}, { headers: getAuthHeader() });
-    localStorage.removeItem("token");
-    return res.data;
-  } catch (err) {
-    console.error("Logout error:", err.response?.data || err.message);
-    throw err;
-  }
+  await api.post("/auth/logout");
+  localStorage.removeItem("token");
 };
 
 export default api;
